@@ -234,7 +234,7 @@ st.subheader("1. Select or Enter a Question")
 
 # Initialize session state for the question box
 if "current_question" not in st.session_state:
-    st.session_state.current_question = SAMPLE_QUESTIONS[0]["question"]
+    st.session_state.current_question = ""
 
 # Dropdown list: Custom + Sample Benchmarks
 dropdown_options = ["✍️ Custom Question (Type or paste your own)"] + [
@@ -256,7 +256,7 @@ def on_dropdown_change():
 selected_option = st.selectbox(
     "Choose from pre-configured benchmark questions or paste a custom one:",
     dropdown_options,
-    index=1,
+    index=0,
     key="dropdown_selection",
     on_change=on_dropdown_change,
 )
