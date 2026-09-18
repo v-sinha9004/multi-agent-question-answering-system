@@ -52,6 +52,7 @@ class WorkerAgent:
         temperature: float = 0.5,
         model: str = DEFAULT_MODEL,
         use_mock: bool = False,
+        api_key: Optional[str] = None,
     ):
         self.name = name
         self.role = role
@@ -59,14 +60,16 @@ class WorkerAgent:
         self.temperature = temperature
         self.model = model
         self.use_mock = use_mock
+        self.api_key = api_key or OPENAI_API_KEY
 
         # Initialize AsyncOpenAI client if available and not mocking
         self._openai_client = None
-        if not self.use_mock and OPENAI_API_KEY and HAS_OPENAI_SDK:
-            kwargs = {"api_key": OPENAI_API_KEY}
+        if not self.use_mock and self.api_key and HAS_OPENAI_SDK:
+            kwargs = {"api_key": self.api_key}
             if OPENAI_BASE_URL:
                 kwargs["base_url"] = OPENAI_BASE_URL
             self._openai_client = AsyncOpenAI(**kwargs)
+
 
     async def solve(self, question: str) -> Dict[str, Any]:
         """
@@ -194,7 +197,7 @@ class WorkerAgent:
             }).encode("utf-8"),
             headers={
                 "Content-Type": "application/json",
-                "Authorization": f"Bearer {OPENAI_API_KEY}",
+                "Authorization": f"Bearer {self.api_key}",
             },
         )
         with urllib.request.urlopen(req, timeout=30) as resp:
@@ -333,6 +336,51 @@ class WorkerAgent:
                         "from 33.3% to 66.7%."
                     ),
                     "confidence": 0.90,
+                }
+
+        # Scenario 4: UPSC Prelims (Preamble / Constitutional law)
+        if "preamble" in q_lower or "upsc" in q_lower:
+            if "agent 1" in self.name.lower():
+                return {
+                    "agent": self.name,
+                    "role": self.role,
+                    "answer": "(a) a part of the Constitution but has no legal effect",
+                    "reasoning": (
+                        "From strict constitutional doctrine, the Preamble is non-justiciable and unenforceable "
+                        "in a court of law. Unlike Fundamental Rights (Part III), no citizen or entity can directly sue "
+                        "the government seeking enforcement of the Preamble alone. Under literal formal definitions, "
+                        "lacking direct judicial enforceability implies it has no legal effect on its own, pointing to (a)."
+                    ),
+                    "confidence": 0.78,
+                }
+            elif "agent 2" in self.name.lower():
+                return {
+                    "agent": self.name,
+                    "role": self.role,
+                    "answer": "(d) a part of the Constitution but has no legal effect independently of other parts",
+                    "reasoning": (
+                        "Trap detected in Option (a)! A critical distinction must be drawn between being 'non-justiciable' "
+                        "and having 'no legal effect'. In Kesavananda Bharati (1973) and LIC of India (1995), the Supreme "
+                        "Court ruled that the Preamble is an integral part of the Constitution. While it cannot be invoked "
+                        "in isolation to strike down laws or grant enforceable remedies, it has indispensable legal effect "
+                        "in interpreting ambiguous constitutional provisions and defining the Basic Structure. Hence, it has "
+                        "no legal effect *independently of other parts*. Option (d) is precisely accurate."
+                    ),
+                    "confidence": 0.96,
+                }
+            else:
+                return {
+                    "agent": self.name,
+                    "role": self.role,
+                    "answer": "(d) a part of the Constitution but has no legal effect independently of other parts",
+                    "reasoning": (
+                        "Standard UPSC Civil Services Examination convention and constitutional jurisprudence: "
+                        "Berubari Union (1960) originally held the Preamble was not a part, but this was overturned by "
+                        "Kesavananda Bharati (1973). In UPSC CSE Prelims 2020, (d) was the official verdict because "
+                        "the Preamble serves as an interpretive key to the minds of the Constitution framers and operates "
+                        "in tandem with Fundamental Rights and Directive Principles, rather than independently."
+                    ),
+                    "confidence": 0.92,
                 }
 
         # Default fallback for arbitrary custom questions in offline mode

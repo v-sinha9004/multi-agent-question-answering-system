@@ -10,33 +10,9 @@ import argparse
 import asyncio
 import sys
 from typing import Any, Dict
-from config import DEFAULT_MODEL, DEFAULT_USE_MOCK, OPENAI_API_KEY
+from config import DEFAULT_MODEL, DEFAULT_USE_MOCK, OPENAI_API_KEY, SAMPLE_QUESTIONS
 from orchestrator import Orchestrator
 
-# Pre-configured sample questions showcasing multi-agent dynamics
-SAMPLE_QUESTIONS = [
-    {
-        "title": "Disagreement Demo: 'Which is heavier: a pound of gold or a pound of feathers?'",
-        "question": "Which is heavier: a pound of gold or a pound of feathers?",
-        "note": "Demonstrates arbitration when 2 agents give colloquial answers and 1 catches the Troy vs Avoirdupois trap.",
-    },
-    {
-        "title": "Cognitive Bias Demo: Bat and Ball problem",
-        "question": (
-            "A bat and a ball cost $1.10 in total. The bat costs $1.00 more than the ball. "
-            "How much does the ball cost?"
-        ),
-        "note": "Demonstrates unanimous algebraic verification debunking the intuitive $0.10 trap.",
-    },
-    {
-        "title": "Probability Demo: Monty Hall problem",
-        "question": (
-            "In the Monty Hall problem, if you choose Door 1 and the host opens Door 3 to reveal a goat, "
-            "should you switch to Door 2 or stay with Door 1? Explain the probabilities."
-        ),
-        "note": "Demonstrates alignment across probabilistic and game-theoretic reasoning.",
-    },
-]
 
 
 def print_result_flow(result: Dict[str, Any]) -> None:
@@ -105,7 +81,7 @@ async def interactive_loop(model: str, use_mock: bool) -> None:
         print(f"  [{len(SAMPLE_QUESTIONS) + 1}] Enter a custom question")
         print(f"  [{len(SAMPLE_QUESTIONS) + 2}] Exit")
 
-        choice = input("\nEnter choice [1-5]: ").strip()
+        choice = input(f"\nEnter choice [1-{len(SAMPLE_QUESTIONS) + 2}]: ").strip()
 
         if choice in [str(i) for i in range(1, len(SAMPLE_QUESTIONS) + 1)]:
             sample = SAMPLE_QUESTIONS[int(choice) - 1]

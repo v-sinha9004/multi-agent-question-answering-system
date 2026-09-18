@@ -98,3 +98,45 @@ RECONCILIATION_SYSTEM_PROMPT = (
     "that the other two missed, rule in favor of the soundest logic even if it is a minority opinion. "
     "You must return your evaluation strictly in the specified JSON format."
 )
+
+# ---------------------------------------------------------------------------
+# Pre-configured Sample Benchmark Questions
+# ---------------------------------------------------------------------------
+SAMPLE_QUESTIONS = [
+    {
+        "title": "Disagreement Demo: Gold vs Feathers trap",
+        "question": "Which is heavier: a pound of gold or a pound of feathers?",
+        "note": "Demonstrates qualitative arbitration when 2 agents give colloquial answers ('equal') and 1 catches the Troy vs Avoirdupois weight trap (feathers are heavier: ~453.6g vs ~373.2g).",
+    },
+    {
+        "title": "Cognitive Bias Demo: Bat and Ball problem",
+        "question": (
+            "A bat and a ball cost $1.10 in total. The bat costs $1.00 more than the ball. "
+            "How much does the ball cost?"
+        ),
+        "note": "Demonstrates unanimous algebraic verification debunking the fast intuitive trap of $0.10, correctly solving for $0.05.",
+    },
+    {
+        "title": "Probability Demo: Monty Hall problem",
+        "question": (
+            "In the Monty Hall problem, if you choose Door 1 and the host opens Door 3 to reveal a goat, "
+            "should you switch to Door 2 or stay with Door 1? Explain the probabilities."
+        ),
+        "note": "Demonstrates cross-agent alignment across probabilistic, conditional filtering, and game-theoretic reasoning.",
+    },
+    {
+        "title": "UPSC Prelims Demo: Legal & Constitutional Status of the Preamble (CSE 2020)",
+        "question": (
+            "The Preamble to the Constitution of India is:\n"
+            "(a) a part of the Constitution but has no legal effect\n"
+            "(b) not a part of the Constitution and has no legal effect either\n"
+            "(c) a part of the Constitution and has the same legal effect as any other part\n"
+            "(d) a part of the Constitution but has no legal effect independently of other parts"
+        ),
+        "note": (
+            "Demonstrates resolving a classic UPSC controversy: Agent 1 falls into the non-justiciability trap (a), "
+            "while Agent 2 & Agent 3 identify that it has interpretive legal effect in conjunction with other provisions (d)."
+        ),
+    },
+]
+

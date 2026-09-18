@@ -60,10 +60,12 @@ This project is built for **educational clarity**: zero heavy frameworks (no Lan
 ├── worker_agent.py           # Independent worker agents (isolated reasoning & JSON parsing)
 ├── reconciliation_agent.py   # Reconciliation judge (qualitative synthesis & arbitration)
 ├── orchestrator.py           # Concurrency coordinator with explicit 5-step lifecycle markers
+├── app.py                    # Interactive Streamlit Web UI (dropdown, custom paste, mock/API toggle)
 ├── main.py                   # Terminal CLI (interactive menu and single-shot flags)
 ├── pyproject.toml            # Project configuration and dependencies (uv)
 ├── uv.lock                   # Exact reproducible lockfile
 └── README.md                 # System overview and architecture guide
+
 ```
 
 ---
@@ -82,11 +84,28 @@ In `orchestrator.py`, the flow is organized into 5 explicitly numbered stages:
 
 ## How to Run
 
-### 1. Zero-Setup Offline Simulation (Default if no API key is set)
+### 1. Interactive Web UI (Streamlit)
 
-The prototype includes an offline simulation engine featuring classic reasoning problems (such as the Troy vs. Avoirdupois weight dilemma, the Bat & Ball problem, and the Monty Hall puzzle).
+The easiest and most comprehensive way to test the system is using the modern Streamlit web dashboard:
 
-Run interactive mode:
+```bash
+uv run streamlit run app.py
+```
+
+Features available in the UI:
+- **Choose mock questions from dropdown**: Instantly populate pre-configured benchmark dilemmas (Gold vs Feathers, Bat & Ball, Monty Hall, UPSC Prelims).
+- **Custom Question Paste**: Type or paste any custom question into the text area.
+- **Toggle Mock or Live API**: Switch easily between zero-cost offline simulation and live OpenAI models (`gpt-4o`, `gpt-4o-mini`, etc.).
+- **Side-by-Side Agent Reasoning**: Inspect each agent's analytical lens, confidence score, and step-by-step reasoning chain in parallel columns.
+- **Master Arbitrator Card**: View the definitive reconciled verdict and qualitative arbitration justification.
+- **Developer Audit Trail**: Inspect raw JSON payloads for all agent interactions.
+
+---
+
+### 2. Terminal CLI: Offline Simulation (Mock Mode)
+
+The prototype also includes a full terminal interface:
+
 ```bash
 uv run main.py
 ```
@@ -96,7 +115,7 @@ Or pass a specific question:
 uv run main.py --mock -q "Which is heavier: a pound of gold or a pound of feathers?"
 ```
 
-### 2. Live OpenAI Mode (Using `gpt-4o`)
+### 3. Terminal CLI: Live OpenAI Mode (Using `gpt-4o`)
 
 To connect to live OpenAI models:
 

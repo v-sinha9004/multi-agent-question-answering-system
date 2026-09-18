@@ -10,7 +10,7 @@ Coordinates the multi-agent question-answering workflow:
 """
 
 import asyncio
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional
 from config import DEFAULT_MODEL, WORKER_PERSONAS
 from worker_agent import WorkerAgent
 from reconciliation_agent import ReconciliationAgent
@@ -22,9 +22,15 @@ class Orchestrator:
     workers and the reconciliation judge.
     """
 
-    def __init__(self, model: str = DEFAULT_MODEL, use_mock: bool = False):
+    def __init__(
+        self,
+        model: str = DEFAULT_MODEL,
+        use_mock: bool = False,
+        api_key: Optional[str] = None,
+    ):
         self.model = model
         self.use_mock = use_mock
+        self.api_key = api_key
 
         # Create 3 independent worker agents with diverse analytical personas
         self.workers: List[WorkerAgent] = [
@@ -35,6 +41,7 @@ class Orchestrator:
                 temperature=persona["temperature"],
                 model=self.model,
                 use_mock=self.use_mock,
+                api_key=self.api_key,
             )
             for persona in WORKER_PERSONAS
         ]
@@ -44,6 +51,7 @@ class Orchestrator:
             name="Reconciliation Agent",
             model=self.model,
             use_mock=self.use_mock,
+            api_key=self.api_key,
         )
 
     async def run(self, question: str) -> Dict[str, Any]:

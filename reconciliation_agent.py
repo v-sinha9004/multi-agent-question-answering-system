@@ -9,7 +9,7 @@ identifies agreements and disagreements, and decides the definitive final answer
 import asyncio
 import json
 import re
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional
 from config import DEFAULT_MODEL, OPENAI_API_KEY, OPENAI_BASE_URL, RECONCILIATION_SYSTEM_PROMPT
 
 try:
@@ -44,14 +44,16 @@ class ReconciliationAgent:
         name: str = "Reconciliation Agent",
         model: str = DEFAULT_MODEL,
         use_mock: bool = False,
+        api_key: Optional[str] = None,
     ):
         self.name = name
         self.model = model
         self.use_mock = use_mock
+        self.api_key = api_key or OPENAI_API_KEY
 
         self._openai_client = None
-        if not self.use_mock and OPENAI_API_KEY and HAS_OPENAI_SDK:
-            kwargs = {"api_key": OPENAI_API_KEY}
+        if not self.use_mock and self.api_key and HAS_OPENAI_SDK:
+            kwargs = {"api_key": self.api_key}
             if OPENAI_BASE_URL:
                 kwargs["base_url"] = OPENAI_BASE_URL
             self._openai_client = AsyncOpenAI(**kwargs)
@@ -191,7 +193,7 @@ class ReconciliationAgent:
             }).encode("utf-8"),
             headers={
                 "Content-Type": "application/json",
-                "Authorization": f"Bearer {OPENAI_API_KEY}",
+                "Authorization": f"Bearer {self.api_key}",
             },
         )
         with urllib.request.urlopen(req, timeout=30) as resp:
@@ -270,6 +272,24 @@ class ReconciliationAgent:
                     "the false 50/50 intuition. Agent 3 cited game-theoretic simulations. All arguments are sound."
                 ),
                 "confidence": 0.95,
+            }
+
+        # Scenario 4: UPSC Prelims (Preamble / Constitutional status)
+        if "preamble" in q_lower or "upsc" in q_lower:
+            return {
+                "final_answer": "(d) a part of the Constitution but has no legal effect independently of other parts",
+                "reasoning": (
+                    "DISAGREEMENT ANALYSIS:\n"
+                    "- Agent 1 concluded (a), arguing that because the Preamble is non-justiciable, it possesses no direct legal effect.\n"
+                    "- Agent 2 (Critical Skeptic) and Agent 3 (Pragmatic Contextualist) both selected (d), correctly distinguishing between "
+                    "'having no legal effect at all' and 'having no legal effect independently of other parts'.\n\n"
+                    "JUDGMENT:\n"
+                    "Agent 1 fell into the classic UPSC trap of conflating non-justiciability with complete legal nullity. As Agent 2 correctly "
+                    "articulated citing Kesavananda Bharati (1973) and LIC of India (1995), the Preamble is an integral part of the Constitution "
+                    "and carries profound legal and interpretive weight when read alongside other constitutional provisions (such as Fundamental "
+                    "Rights and Directive Principles). Therefore, Option (d) is legally exact and adopted as the definitive answer."
+                ),
+                "confidence": 0.96,
             }
 
         # Default fallback for arbitrary questions
