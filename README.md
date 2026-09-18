@@ -1,5 +1,9 @@
 # Simple Multi-Agent Question-Answering System
 
+[![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://v-sinha9004-multi-agent-question-answering-system-app-fted6r.streamlit.app/)
+
+> 🚀 **Live Demo:** Try the interactive application directly online at [v-sinha9004-multi-agent-question-answering-system-app-fted6r.streamlit.app](https://v-sinha9004-multi-agent-question-answering-system-app-fted6r.streamlit.app/) without any local installation.
+
 A lightweight, readable Python prototype demonstrating the **Fan-Out / Fan-In (Ensemble & Arbitrator)** multi-agent architecture.
 
 This project is built for **educational clarity**: zero heavy frameworks (no LangChain, AutoGen, or CrewAI), no complex infrastructure, and standard Python conventions so you can easily understand how multi-agent coordination actually works under the hood.
@@ -86,11 +90,13 @@ In `orchestrator.py`, the flow is organized into 5 explicitly numbered stages:
 
 ### 1. Interactive Web UI (Streamlit)
 
-The easiest and most comprehensive way to test the system is using the modern Streamlit web dashboard:
+You can explore the system directly in your browser or run it locally:
 
-```bash
-uv run streamlit run app.py
-```
+- **🌐 Live Deployed App:** [Streamlit Community Cloud Demo](https://v-sinha9004-multi-agent-question-answering-system-app-fted6r.streamlit.app/)
+- **💻 Run Locally:**
+  ```bash
+  uv run streamlit run app.py
+  ```
 
 Features available in the UI:
 - **Choose mock questions from dropdown**: Instantly populate pre-configured benchmark dilemmas (Gold vs Feathers, Bat & Ball, Monty Hall, UPSC Prelims).
