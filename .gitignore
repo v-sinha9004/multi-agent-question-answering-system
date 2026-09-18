@@ -16,6 +16,7 @@ env/
 .env.local
 .env.*.local
 !.env.example
+!example.env
 
 # Distribution / Packaging
 build/

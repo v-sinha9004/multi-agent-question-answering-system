@@ -14,7 +14,7 @@ import asyncio
 import json
 import re
 from typing import Any, Dict, Optional
-from config import DEFAULT_MODEL, OPENAI_API_KEY
+from config import DEFAULT_MODEL, OPENAI_API_KEY, OPENAI_BASE_URL
 
 try:
     from pydantic import BaseModel, Field
@@ -63,7 +63,10 @@ class WorkerAgent:
         # Initialize AsyncOpenAI client if available and not mocking
         self._openai_client = None
         if not self.use_mock and OPENAI_API_KEY and HAS_OPENAI_SDK:
-            self._openai_client = AsyncOpenAI(api_key=OPENAI_API_KEY)
+            kwargs = {"api_key": OPENAI_API_KEY}
+            if OPENAI_BASE_URL:
+                kwargs["base_url"] = OPENAI_BASE_URL
+            self._openai_client = AsyncOpenAI(**kwargs)
 
     async def solve(self, question: str) -> Dict[str, Any]:
         """
@@ -154,8 +157,10 @@ class WorkerAgent:
     def _http_request(self, messages: list) -> str:
         """Fallback standard-library HTTP requester with strict JSON schema Structured Outputs."""
         import urllib.request
+        base_url = OPENAI_BASE_URL or "https://api.openai.com/v1"
+        endpoint = f"{base_url.rstrip('/')}/chat/completions"
         req = urllib.request.Request(
-            "https://api.openai.com/v1/chat/completions",
+            endpoint,
             data=json.dumps({
                 "model": self.model,
                 "messages": messages,

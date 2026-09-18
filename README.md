@@ -100,17 +100,23 @@ uv run main.py --mock -q "Which is heavier: a pound of gold or a pound of feathe
 
 To connect to live OpenAI models:
 
-1. Set your API key:
+1. Configure your `.env` file (the system automatically loads environment variables from `.env` via `python-dotenv`):
+   ```bash
+   cp .env.example .env
+   # Edit .env and paste your API key:
+   # OPENAI_API_KEY="sk-..."
+   ```
+   *Alternatively, export the key in your terminal session:*
    ```bash
    export OPENAI_API_KEY="sk-..."
    ```
 
-2. Run with any model (uv will automatically sync dependencies):
+2. Run with any model (`uv` automatically syncs dependencies):
    ```bash
-   # Uses default gpt-4o
+   # Uses default gpt-4o (or the model configured in .env)
    uv run main.py
 
-   # Or specify a different model:
+   # Or specify a different model via CLI flag:
    uv run main.py --model gpt-4o-mini -q "Solve: If 5 machines take 5 minutes to make 5 widgets, how long do 100 machines take to make 100 widgets?"
    ```
 
